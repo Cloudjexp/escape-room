@@ -1,0 +1,142 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import ChallengeShell from "../../components/ChallengeShell.astro";
+
+const PAIRS = [
+  { id: 1, word: "GLOOMY", meaning: "dark and a little frightening" },
+  { id: 2, word: "ANCIENT", meaning: "extremely old, from long ago" },
+  { id: 3, word: "ABANDONED", meaning: "empty, because everyone has left it" },
+  { id: 4, word: "MYSTERIOUS", meaning: "strange and difficult to explain" },
+  { id: 5, word: "EERIE", meaning: "strange in a way that feels frightening" },
+  { id: 6, word: "SILENT", meaning: "completely quiet, without any sound" },
+];
+---
+
+<BaseLayout title="Challenge 1 · Vocabulary Challenge">
+  <ChallengeShell
+    id={1}
+    instructions="Dusty tomes cover the shelves of the library. Click a word, then click its correct meaning, to match every pair and summon the raven's secret."
+  >
+    <div class="mb-4 flex items-center justify-between">
+      <h3 class="text-sm font-bold uppercase tracking-wider text-azure-300">Words</h3>
+      <h3 class="text-sm font-bold uppercase tracking-wider text-azure-300">Meanings</h3>
+    </div>
+
+    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+      <div id="vocab-words" class="flex flex-col gap-2.5"></div>
+      <div id="vocab-meanings" class="flex flex-col gap-2.5"></div>
+    </div>
+
+    <div class="mt-6 flex flex-col items-center gap-2">
+      <p id="vocab-status" class="text-sm font-semibold text-slate-400">0 / 6 pairs matched</p>
+      <div id="vocab-feedback" class="hidden"></div>
+    </div>
+  </ChallengeShell>
+</BaseLayout>
+
+<script define:vars={{ pairs: PAIRS }} is:inline>
+  window.__VOCAB_PAIRS__ = pairs;
+</script>
+
+<script>
+  import { playClick, playError } from "../../scripts/sound";
+  import { showFeedback, clearFeedback } from "../../scripts/feedback";
+
+  type Pair = { id: number; word: string; meaning: string };
+
+  const pairs = (window as any).__VOCAB_PAIRS__ as Pair[];
+  const wordsEl = document.getElementById("vocab-words")!;
+  const meaningsEl = document.getElementById("vocab-meanings")!;
+  const statusEl = document.getElementById("vocab-status")!;
+  const feedbackEl = document.getElementById("vocab-feedback")!;
+
+  function shuffled<T>(arr: T[]): T[] {
+    const copy = [...arr];
+    for (let i = copy.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [copy[i], copy[j]] = [copy[j], copy[i]];
+    }
+    return copy;
+  }
+
+  function renderColumn(container: HTMLElement, items: Pair[], key: "word" | "meaning") {
+    for (const item of items) {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.dataset.pairId = String(item.id);
+      btn.textContent = item[key];
+      btn.className =
+        key === "word"
+          ? "option-card rounded-lg px-4 py-3 text-left font-display text-base font-bold tracking-wide text-gold-200"
+          : "option-card rounded-lg px-4 py-3 text-left text-sm text-slate-300 sm:text-base";
+      container.appendChild(btn);
+    }
+  }
+
+  renderColumn(wordsEl, shuffled(pairs), "word");
+  renderColumn(meaningsEl, shuffled(pairs), "meaning");
+
+  let selectedWord: HTMLButtonElement | null = null;
+  let selectedMeaning: HTMLButtonElement | null = null;
+  let matchedCount = 0;
+
+  function evaluate() {
+    if (!selectedWord || !selectedMeaning) return;
+    const isMatch = selectedWord.dataset.pairId === selectedMeaning.dataset.pairId;
+
+    if (isMatch) {
+      selectedWord.classList.remove("selected");
+      selectedMeaning.classList.remove("selected");
+      selectedWord.classList.add("matched");
+      selectedMeaning.classList.add("matched");
+      selectedWord.disabled = true;
+      selectedMeaning.disabled = true;
+      matchedCount++;
+      statusEl.textContent = `${matchedCount} / ${pairs.length} pairs matched`;
+      playClick();
+
+      if (matchedCount === pairs.length) {
+        showFeedback(feedbackEl, "success", "All pairs matched! The raven awakens...");
+        window.dispatchEvent(new Event("challenge:solved"));
+      } else {
+        clearFeedback(feedbackEl);
+      }
+
+      selectedWord = null;
+      selectedMeaning = null;
+    } else {
+      const badWord = selectedWord;
+      const badMeaning = selectedMeaning;
+      badWord.classList.add("incorrect");
+      badMeaning.classList.add("incorrect");
+      showFeedback(feedbackEl, "error", "That's not a match. Try again.");
+      playError();
+
+      setTimeout(() => {
+        badWord.classList.remove("selected", "incorrect");
+        badMeaning.classList.remove("selected", "incorrect");
+      }, 500);
+
+      selectedWord = null;
+      selectedMeaning = null;
+    }
+  }
+
+  wordsEl.addEventListener("click", (e) => {
+    const btn = (e.target as HTMLElement).closest("button") as HTMLButtonElement | null;
+    if (!btn || btn.disabled) return;
+    selectedWord?.classList.remove("selected");
+    selectedWord = btn;
+    btn.classList.add("selected");
+    evaluate();
+  });
+
+  meaningsEl.addEventListener("click", (e) => {
+    const btn = (e.target as HTMLElement).closest("button") as HTMLButtonElement | null;
+    if (!btn || btn.disabled) return;
+    selectedMeaning?.classList.remove("selected");
+    selectedMeaning = btn;
+    btn.classList.add("selected");
+    evaluate();
+  });
+</script>

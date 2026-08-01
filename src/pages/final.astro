@@ -1,0 +1,164 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Card from "../components/Card.astro";
+import Button from "../components/Button.astro";
+import ProgressBar from "../components/ProgressBar.astro";
+import { CHALLENGES } from "../data/challenges";
+
+const FIELDS = CHALLENGES.map((c) => ({ id: `code-${c.id}`, challengeId: c.id, label: `Code ${c.id}`, hint: c.subtitle }));
+---
+
+<BaseLayout title="The Chest">
+  <section class="mx-auto max-w-2xl px-4 py-12 sm:px-6">
+    <div class="mb-8 animate-fade-up">
+      <ProgressBar />
+    </div>
+
+    <Card glow class="animate-fade-up text-center">
+      <p class="mb-2 text-sm font-semibold uppercase tracking-[0.3em] text-azure-300">Final Challenge</p>
+      <h1 class="font-display text-3xl font-black text-gold-300 text-glow-gold sm:text-4xl">🗝️ Open the Chest</h1>
+      <p class="mx-auto mt-4 max-w-md text-sm text-slate-300 sm:text-base">
+        Deep in the castle's crypt lies an ancient chest, guarded by five magical wards. Enter the five secret
+        codes you collected from the guardians, in order, to break the wards and reveal Lord Blackwood's secret.
+      </p>
+
+      <!-- Chest illustration -->
+      <div class="my-10 flex justify-center" style="perspective: 900px;">
+        <div class="relative h-28 w-44 sm:h-32 sm:w-52">
+          <div
+            id="chest-treasure"
+            class="pointer-events-none absolute left-1/2 top-0 -translate-x-1/2 -translate-y-1/2 text-4xl opacity-0 sm:text-5xl"
+            aria-hidden="true"
+          >
+            👑🗝️👻
+          </div>
+          <div
+            id="chest-lid"
+            class="absolute left-0 top-0 h-12 w-full rounded-t-2xl border border-gold-700 bg-gradient-to-b from-gold-300 to-gold-600 shadow-inner sm:h-14"
+            style="transform-origin: top center;"
+          >
+            <div class="mx-auto mt-2 h-3 w-3 rounded-full bg-ink-soft sm:h-4 sm:w-4"></div>
+          </div>
+          <div
+            class="absolute bottom-0 h-20 w-full rounded-b-2xl border border-[#3a230f] bg-gradient-to-b from-[#6b4423] to-[#3a230f] shadow-xl sm:h-22"
+          >
+          </div>
+        </div>
+      </div>
+
+      <form id="chest-form" class="space-y-3 text-left">
+        {FIELDS.map((f) => (
+          <div class="flex items-center gap-3">
+            <label for={f.id} class="w-24 shrink-0 text-sm font-semibold text-slate-300 sm:w-28">
+              {f.label}
+            </label>
+            <input
+              id={f.id}
+              data-challenge-id={f.challengeId}
+              type="text"
+              autocomplete="off"
+              placeholder={f.hint}
+              class="option-card w-full rounded-lg px-3 py-2 text-center font-mono uppercase tracking-widest text-white focus:border-azure-400 focus:outline-none"
+            />
+          </div>
+        ))}
+
+        <div class="pt-2 text-center">
+          <button
+            type="button"
+            id="reveal-codes-btn"
+            class="text-xs font-semibold text-azure-300 underline decoration-dotted underline-offset-4 hover:text-azure-200"
+          >
+            🔎 Show codes I've already found
+          </button>
+          <p id="reveal-codes-output" class="mt-2 hidden text-xs text-slate-400"></p>
+        </div>
+
+        <div id="chest-feedback" class="hidden"></div>
+
+        <div class="flex justify-center pt-2">
+          <Button id="open-chest-btn" type="submit" variant="primary" size="lg">🗝️ Open the Chest</Button>
+        </div>
+      </form>
+
+      <div id="victory-panel" class="mt-8 hidden animate-pop-in rounded-xl border border-gold-500/50 bg-gold-500/10 p-8">
+        <p class="font-display text-3xl font-black text-gold-300 text-glow-gold animate-shimmer sm:text-4xl">
+          YOU ESCAPED!
+        </p>
+        <p class="mt-2 text-lg text-slate-200">Congratulations, brave adventurer! The castle's secret is finally free. 🏆</p>
+        <p id="victory-time" class="mt-3 text-sm text-azure-300"></p>
+        <div class="mt-6">
+          <Button id="play-again-btn" href="/" variant="ghost" size="md">🔁 Play Again</Button>
+        </div>
+      </div>
+    </Card>
+  </section>
+</BaseLayout>
+
+<script is:inline define:vars={{ codesByChallenge: Object.fromEntries(CHALLENGES.map((c) => [c.id, c.code])) }}>
+  window.__CHEST_CODES__ = codesByChallenge;
+</script>
+
+<script>
+  import { getProgress, markFinished, formatElapsed, resetProgress } from "../scripts/gameState";
+  import { playError, playVictoryFanfare } from "../scripts/sound";
+  import { launchConfetti } from "../scripts/confetti";
+  import { showFeedback, clearFeedback } from "../scripts/feedback";
+
+  const expectedCodes = (window as any).__CHEST_CODES__ as Record<number, string>;
+  const form = document.getElementById("chest-form") as HTMLFormElement;
+  const feedback = document.getElementById("chest-feedback")!;
+  const lid = document.getElementById("chest-lid")!;
+  const treasure = document.getElementById("chest-treasure")!;
+  const victoryPanel = document.getElementById("victory-panel")!;
+  const victoryTime = document.getElementById("victory-time")!;
+
+  document.getElementById("play-again-btn")?.addEventListener("click", () => {
+    resetProgress();
+  });
+
+  document.getElementById("reveal-codes-btn")?.addEventListener("click", () => {
+    const progress = getProgress();
+    const output = document.getElementById("reveal-codes-output")!;
+    const known = Object.entries(progress.codes);
+    output.textContent = known.length
+      ? known.map(([id, code]) => `Challenge ${id}: ${code}`).join("  ·  ")
+      : "You haven't completed any challenges yet. Go solve some first!";
+    output.classList.remove("hidden");
+  });
+
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    let allCorrect = true;
+
+    for (const [idStr, expected] of Object.entries(expectedCodes)) {
+      const input = document.getElementById(`code-${idStr}`) as HTMLInputElement;
+      const guess = input.value.trim().toUpperCase();
+      const isCorrect = guess === expected;
+      input.classList.toggle("incorrect", !isCorrect);
+      input.classList.toggle("correct", isCorrect);
+      if (!isCorrect) allCorrect = false;
+    }
+
+    if (allCorrect) {
+      clearFeedback(feedback);
+      lid.classList.add("chest-lid-open");
+      treasure.classList.add("treasure-rise");
+      launchConfetti();
+      playVictoryFanfare();
+
+      const progress = markFinished();
+      if (progress.startTime) {
+        victoryTime.textContent = `Escape time: ${formatElapsed((progress.finishTime as number) - progress.startTime)}`;
+      }
+      victoryPanel.classList.remove("hidden");
+      victoryPanel.scrollIntoView({ behavior: "smooth", block: "center" });
+      form.querySelectorAll("input, button").forEach((el) => ((el as HTMLInputElement).disabled = true));
+    } else {
+      showFeedback(feedback, "error", "One or more codes are wrong. Double-check each challenge page.");
+      playError();
+      form.classList.add("animate-shake");
+      setTimeout(() => form.classList.remove("animate-shake"), 650);
+    }
+  });
+</script>

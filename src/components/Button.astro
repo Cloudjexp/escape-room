@@ -1,0 +1,58 @@
+---
+// Reusable, theme-aware button. Renders an <a> when `href` is given,
+// otherwise a <button>. Use the `variant` prop to switch color schemes.
+
+interface Props {
+  href?: string;
+  type?: "button" | "submit" | "reset";
+  variant?: "primary" | "secondary" | "ghost";
+  size?: "sm" | "md" | "lg";
+  disabled?: boolean;
+  fullWidth?: boolean;
+  class?: string;
+  id?: string;
+}
+
+const {
+  href,
+  type = "button",
+  variant = "primary",
+  size = "md",
+  disabled = false,
+  fullWidth = false,
+  class: className = "",
+  id,
+} = Astro.props;
+
+const base =
+  "inline-flex items-center justify-center gap-2 rounded-xl font-bold font-display tracking-wide transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-50";
+
+const variants: Record<string, string> = {
+  primary:
+    "bg-gradient-to-br from-gold-400 to-gold-600 text-ink shadow-lg shadow-gold-600/20 hover:shadow-gold-500/40 hover:-translate-y-0.5 focus-visible:outline-gold-400",
+  secondary:
+    "bg-gradient-to-br from-azure-500 to-azure-700 text-white shadow-lg shadow-azure-600/20 hover:shadow-azure-500/40 hover:-translate-y-0.5 focus-visible:outline-azure-400",
+  ghost:
+    "border border-border bg-panel text-slate-200 hover:border-gold-500/60 hover:text-gold-300 focus-visible:outline-gold-400",
+};
+
+const sizes: Record<string, string> = {
+  sm: "px-4 py-2 text-sm",
+  md: "px-6 py-3 text-base",
+  lg: "px-8 py-4 text-lg",
+};
+
+const classes = [base, variants[variant], sizes[size], fullWidth ? "w-full" : ""].filter(Boolean).join(" ");
+---
+
+{
+  href ? (
+    <a href={href} id={id} class={`${classes} ${className}`}>
+      <slot />
+    </a>
+  ) : (
+    <button type={type} id={id} disabled={disabled} class={`${classes} ${className}`}>
+      <slot />
+    </button>
+  )
+}

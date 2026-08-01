@@ -1,0 +1,77 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import ChallengeShell from "../../components/ChallengeShell.astro";
+import Button from "../../components/Button.astro";
+
+const ACCEPTABLE_ANSWERS = ["GHOST", "PHANTOM", "SPIRIT"];
+---
+
+<BaseLayout title="Challenge 5 · Riddle">
+  <ChallengeShell
+    id={5}
+    instructions="The final guardian of Ravenswood Castle only lets you pass if you answer this riddle correctly."
+  >
+    <div class="mx-auto max-w-lg rounded-xl border border-gold-500/30 bg-gold-500/5 p-6 text-center">
+      <p class="mb-1 text-xs font-semibold uppercase tracking-wider text-gold-300">The Final Riddle</p>
+      <p class="mt-3 font-display text-lg italic leading-relaxed text-slate-200 sm:text-xl">
+        "I have no body, yet I wander these halls.<br />
+        I have no voice, yet you hear me at night.<br />
+        I was once like you, now I'm cold as stone,<br />
+        forever wandering this castle alone.<br />
+        What am I?"
+      </p>
+    </div>
+
+    <div class="mt-6 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
+      <label for="riddle-answer" class="sr-only">Your answer</label>
+      <input
+        id="riddle-answer"
+        type="text"
+        maxlength="30"
+        placeholder="Type your answer"
+        autocomplete="off"
+        class="option-card w-full max-w-xs rounded-lg px-4 py-2.5 text-center font-mono uppercase tracking-widest text-white focus:border-azure-400 focus:outline-none sm:w-64"
+      />
+      <Button id="riddle-check-btn" variant="secondary" size="md">Answer</Button>
+    </div>
+    <div id="riddle-feedback" class="hidden"></div>
+  </ChallengeShell>
+</BaseLayout>
+
+<script define:vars={{ acceptable: ACCEPTABLE_ANSWERS }} is:inline>
+  window.__RIDDLE_ANSWERS__ = acceptable;
+</script>
+
+<script>
+  import { playError } from "../../scripts/sound";
+  import { showFeedback, clearFeedback } from "../../scripts/feedback";
+
+  const acceptable = (window as any).__RIDDLE_ANSWERS__ as string[];
+  const input = document.getElementById("riddle-answer") as HTMLInputElement;
+  const feedback = document.getElementById("riddle-feedback")!;
+
+  function normalize(value: string): string {
+    return value.trim().toUpperCase().replace(/^(A|AN|THE)\s+/, "");
+  }
+
+  function checkAnswer() {
+    const guess = normalize(input.value);
+    if (acceptable.includes(guess)) {
+      clearFeedback(feedback);
+      input.classList.remove("incorrect");
+      input.classList.add("correct");
+      showFeedback(feedback, "success", "The ghost fades into the moonlight, leaving its secret behind...");
+      window.dispatchEvent(new Event("challenge:solved"));
+    } else {
+      input.classList.remove("correct");
+      input.classList.add("incorrect");
+      showFeedback(feedback, "error", "Not quite. Read the riddle again carefully.");
+      playError();
+    }
+  }
+
+  document.getElementById("riddle-check-btn")?.addEventListener("click", checkAnswer);
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") checkAnswer();
+  });
+</script>

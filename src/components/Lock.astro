@@ -1,0 +1,68 @@
+---
+// Animated SVG padlock. Toggle the open state from a page script by
+// adding/removing the `.is-open` class on the element with this `id`.
+
+interface Props {
+  id?: string;
+  size?: number;
+  locked?: boolean;
+}
+
+const { id = "lock", size = 96, locked = true } = Astro.props;
+---
+
+<div
+  id={id}
+  class:list={["lock inline-block animate-pulse-glow rounded-full", { "is-open": !locked }]}
+  data-locked={locked ? "true" : "false"}
+>
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 100 100"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    aria-hidden="true"
+  >
+    <g class="lock-shackle" style="transform-origin: 50px 40px;">
+      <path
+        d="M30 42V30a20 20 0 0 1 40 0v12"
+        stroke="url(#lock-shackle-gradient)"
+        stroke-width="9"
+        stroke-linecap="round"
+        fill="none"
+      />
+    </g>
+    <rect x="18" y="40" width="64" height="48" rx="10" fill="url(#lock-body-gradient)" stroke="#a8730f" stroke-width="2" />
+    <circle class="lock-dot" cx="50" cy="60" r="6" fill="#050a14" />
+    <rect class="lock-dot" x="47" y="60" width="6" height="14" rx="3" fill="#050a14" />
+    <defs>
+      <linearGradient id="lock-shackle-gradient" x1="30" y1="10" x2="70" y2="42" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#8fd6ff" />
+        <stop offset="1" stop-color="#2a9bf0" />
+      </linearGradient>
+      <linearGradient id="lock-body-gradient" x1="18" y1="40" x2="82" y2="88" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#ffe08a" />
+        <stop offset="1" stop-color="#d99a1e" />
+      </linearGradient>
+    </defs>
+  </svg>
+</div>
+
+<style>
+  .lock-shackle {
+    transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .lock.is-open .lock-shackle {
+    transform: rotate(-35deg) translateY(-6px);
+  }
+  .lock.is-open .lock-dot {
+    opacity: 0;
+  }
+  .lock.is-open svg {
+    filter: drop-shadow(0 0 14px rgba(255, 209, 102, 0.65));
+  }
+  .lock.is-open {
+    animation: none;
+  }
+</style>

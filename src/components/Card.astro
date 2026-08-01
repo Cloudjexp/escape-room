@@ -1,0 +1,28 @@
+---
+// Generic themed panel used across the site for content blocks.
+
+interface Props {
+  title?: string;
+  icon?: string;
+  class?: string;
+  glow?: boolean;
+}
+
+const { title, icon, class: className = "", glow = false } = Astro.props;
+---
+
+<div class={`panel ${glow ? "panel-glow" : ""} rounded-2xl p-6 sm:p-8 ${className}`}>
+  {
+    title && (
+      <div class="mb-4 flex items-center gap-3">
+        {icon && (
+          <span class="text-2xl" aria-hidden="true">
+            {icon}
+          </span>
+        )}
+        <h2 class="font-display text-xl font-bold text-gold-300 sm:text-2xl">{title}</h2>
+      </div>
+    )
+  }
+  <slot />
+</div>

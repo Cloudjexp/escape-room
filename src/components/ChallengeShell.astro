@@ -1,0 +1,96 @@
+---
+// Shared chrome for every /challenge/[n] page: header, progress bar, and a
+// success panel that reveals the secret code once the puzzle is solved.
+// Individual challenge pages only need to provide the puzzle markup/logic
+// and call `unlockChallenge()` (see bottom script) when the player wins.
+
+import Card from "./Card.astro";
+import ProgressBar from "./ProgressBar.astro";
+import Button from "./Button.astro";
+import { getChallenge, CHALLENGES } from "../data/challenges";
+
+interface Props {
+  id: number;
+  instructions?: string;
+}
+
+const { id, instructions } = Astro.props;
+const challenge = getChallenge(id);
+const next = CHALLENGES.find((c) => c.id === id + 1);
+const nextPath = next ? next.path : "/final";
+const nextLabel = next ? `Challenge ${next.id}` : "The Chest";
+---
+
+<section class="mx-auto max-w-3xl px-4 py-10 sm:px-6">
+  <div class="mb-8 animate-fade-up">
+    <ProgressBar />
+  </div>
+
+  <Card glow class="animate-fade-up">
+    <p class="mb-2 text-sm font-semibold uppercase tracking-[0.3em] text-azure-300 text-glow-blue">
+      Challenge {id} of 5
+    </p>
+    <div class="mb-2 flex items-center gap-3">
+      <span class="text-3xl" aria-hidden="true">{challenge.icon}</span>
+      <h1 class="font-display text-2xl font-black text-gold-300 text-glow-gold sm:text-3xl">
+        {challenge.title}
+      </h1>
+    </div>
+    {instructions && <p class="mb-6 max-w-xl text-sm leading-relaxed text-slate-300 sm:text-base">{instructions}</p>}
+
+    <div id="challenge-body">
+      <slot />
+    </div>
+
+    <div id="success-panel" class="mt-8 hidden animate-pop-in rounded-xl border border-gold-500/50 bg-gold-500/10 p-6 text-center panel-glow">
+      <p class="text-lg font-bold text-gold-300">🎉 Challenge solved!</p>
+      <p class="mt-2 text-sm text-slate-300">Here is your secret code — write it down, you'll need it for the chest.</p>
+      <p class="mt-3 inline-block font-display text-3xl font-black tracking-[0.3em] text-gold-200 text-glow-gold animate-shimmer">
+        {challenge.code}
+      </p>
+      <div class="mt-6">
+        <Button href={nextPath} variant="primary" size="lg">
+          Continue to {nextLabel} →
+        </Button>
+      </div>
+    </div>
+  </Card>
+
+  <div class="mt-6 flex justify-between text-sm">
+    <a href="/story" class="text-slate-400 transition hover:text-gold-300">← Back to story</a>
+    <a href="/final" class="text-slate-400 transition hover:text-gold-300">Go to the chest →</a>
+  </div>
+</section>
+
+<script is:inline define:vars={{ challengeId: id }}>
+  window.__ESCAPE_ROOM_CHALLENGE_ID__ = challengeId;
+</script>
+
+<script>
+  import { ensureStarted, isChallengeComplete, markChallengeComplete } from "../scripts/gameState";
+  import { playSuccess } from "../scripts/sound";
+  import { getChallenge } from "../data/challenges";
+
+  ensureStarted();
+
+  const id = (window as any).__ESCAPE_ROOM_CHALLENGE_ID__ as number;
+  const challenge = getChallenge(id);
+
+  function showSuccessPanel() {
+    document.getElementById("success-panel")?.classList.remove("hidden");
+  }
+
+  // If the player already solved this one (e.g. after a reload), show the
+  // code immediately instead of making them redo the puzzle.
+  if (isChallengeComplete(id)) {
+    showSuccessPanel();
+  }
+
+  // Pages dispatch this custom event when the puzzle is solved.
+  window.addEventListener("challenge:solved", () => {
+    markChallengeComplete(id, challenge.code);
+    playSuccess();
+    showSuccessPanel();
+    document.getElementById("success-panel")?.scrollIntoView({ behavior: "smooth", block: "center" });
+  });
+</script>
