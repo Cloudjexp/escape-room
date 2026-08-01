@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="An interactive haunted-castle escape room for English class."
+    />
+    <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+    <title>Welcome · Escape Room</title>
+  </head>
+
+  <body class="flex min-h-screen flex-col">
+    <header class="sticky top-0 z-50 border-b border-white/10 bg-ink/80 backdrop-blur-md">
+      <nav class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
+        <a href="index.html" class="flex items-center gap-2 font-display text-lg font-bold text-gold-400 sm:text-xl">
+          <span aria-hidden="true">🏰</span>
+          <span class="hidden sm:inline">The Haunted Castle</span>
+          <span class="sm:hidden">Escape Room</span>
+        </a>
+
+        <div class="flex items-center gap-3 sm:gap-5">
+          <div id="nav-timer" class="hidden items-center gap-1.5 rounded-full border border-border bg-panel px-3 py-1.5 font-mono text-sm text-azure-300 sm:flex">
+            <span aria-hidden="true">⏱️</span>
+            <span id="nav-timer-value">00:00</span>
+          </div>
+
+          <div class="flex items-center gap-1.5" aria-label="Challenge progress">
+            <span class="nav-dot flex h-6 w-6 items-center justify-center rounded-full border border-border bg-panel text-[11px] font-bold text-slate-400 transition-colors" data-challenge-id="1" title="Challenge 1: Vocabulary Challenge">1</span>
+            <span class="nav-dot flex h-6 w-6 items-center justify-center rounded-full border border-border bg-panel text-[11px] font-bold text-slate-400 transition-colors" data-challenge-id="2" title="Challenge 2: Grammar Challenge">2</span>
+            <span class="nav-dot flex h-6 w-6 items-center justify-center rounded-full border border-border bg-panel text-[11px] font-bold text-slate-400 transition-colors" data-challenge-id="3" title="Challenge 3: Reading Comprehension">3</span>
+            <span class="nav-dot flex h-6 w-6 items-center justify-center rounded-full border border-border bg-panel text-[11px] font-bold text-slate-400 transition-colors" data-challenge-id="4" title="Challenge 4: Logic Puzzle">4</span>
+            <span class="nav-dot flex h-6 w-6 items-center justify-center rounded-full border border-border bg-panel text-[11px] font-bold text-slate-400 transition-colors" data-challenge-id="5" title="Challenge 5: Riddle">5</span>
+          </div>
+
+          <a href="story.html" class="hidden rounded-lg border border-gold-600/50 px-3 py-1.5 text-sm font-semibold text-gold-300 transition hover:bg-gold-500/10 md:inline-block">
+            Story
+          </a>
+        </div>
+      </nav>
+    </header>
+
+    <main class="flex-1">
+      <section class="relative flex min-h-[calc(100vh-140px)] items-center justify-center overflow-hidden px-4 py-16">
+        <div class="pointer-events-none absolute inset-0 overflow-hidden opacity-40" aria-hidden="true">
+          <span class="animate-float absolute left-[8%] top-[20%] text-5xl" style="animation-delay: 0s;">🏰</span>
+          <span class="animate-float absolute right-[10%] top-[15%] text-5xl" style="animation-delay: 0.6s;">👻</span>
+          <span class="animate-float absolute left-[15%] bottom-[18%] text-5xl" style="animation-delay: 1.2s;">🦇</span>
+          <span class="animate-float absolute right-[12%] bottom-[22%] text-5xl" style="animation-delay: 1.8s;">🕯️</span>
+          <span class="animate-float absolute left-1/2 top-[8%] text-4xl" style="animation-delay: 2.4s;">🗝️</span>
+        </div>
+
+        <div class="panel panel-glow rounded-2xl p-6 sm:p-8 animate-pop-in relative z-10 max-w-2xl text-center">
+          <p class="mb-3 text-sm font-semibold uppercase tracking-[0.3em] text-azure-300">English Class Adventure</p>
+          <h1 class="font-display text-4xl font-black text-gold-300 text-glow-gold sm:text-6xl">
+            🗝️ Escape Room
+          </h1>
+          <p class="mt-4 font-display text-xl text-slate-200 sm:text-2xl animate-shimmer">The Haunted Castle</p>
+
+          <p class="mx-auto mt-6 max-w-lg text-base leading-relaxed text-slate-300 sm:text-lg">
+            Ravenswood Castle has been sealed for three hundred years. Five ghostly guardians stand between
+            you and its darkest secret. Solve their challenges, collect the codes, and open the ancient chest
+            before the candles burn out!
+          </p>
+
+          <div class="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
+            <a href="story.html" id="start-btn" class="bg-yellow-400 text-black hover:bg-yellow-300 rounded-xl font-bold transition px-8 py-4 text-lg">
+              🏰 Start Adventure
+            </a>
+            <a href="final.html" class="border border-slate-600 text-white hover:bg-slate-800 rounded-xl transition px-8 py-4 text-lg">
+              🗝️ Go to the Chest
+            </a>
+          </div>
+
+          <p class="mt-6 text-xs text-slate-500">Your progress is saved automatically on this device.</p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="border-t border-white/10 bg-ink-soft/60 py-6">
+      <div class="mx-auto flex max-w-6xl flex-col items-center gap-2 px-4 text-center text-sm text-slate-400 sm:flex-row sm:justify-between sm:px-6">
+        <p class="flex items-center gap-1.5">
+          <span aria-hidden="true">🕯️</span>
+          Escape Room · The Haunted Castle — built for English class
+        </p>
+        <p class="flex items-center gap-4 text-slate-500">
+          <a href="index.html" class="transition hover:text-gold-300">Home</a>
+          <a href="story.html" class="transition hover:text-gold-300">Story</a>
+          <a href="final.html" class="transition hover:text-gold-300">Chest</a>
+        </p>
+      </div>
+    </footer>
+
+    <script src="js/storage.js"></script>
+    <script src="js/progress.js"></script>
+    <script src="js/app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="An interactive haunted-castle escape room for English class."
+    />
+    <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+    <title>The Chest · Escape Room</title>
+  </head>
+
+  <body class="flex min-h-screen flex-col">
+    <header class="sticky top-0 z-50 border-b border-white/10 bg-ink/80 backdrop-blur-md">
+      <nav class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
+        <a href="index.html" class="flex items-center gap-2 font-display text-lg font-bold text-gold-400 sm:text-xl">
+          <span aria-hidden="true">🏰</span>
+          <span class="hidden sm:inline">The Haunted Castle</span>
+          <span class="sm:hidden">Escape Room</span>
+        </a>
+
+        <div class="flex items-center gap-3 sm:gap-5">
+          <div id="nav-timer" class="hidden items-center gap-1.5 rounded-full border border-border bg-panel px-3 py-1.5 font-mono text-sm text-azure-300 sm:flex">
+            <span aria-hidden="true">⏱️</span>
+            <span id="nav-timer-value">00:00</span>
+          </div>
+
+          <div class="flex items-center gap-1.5" aria-label="Challenge progress">
+            <span class="nav-dot flex h-6 w-6 items-center justify-center rounded-full border border-border bg-panel text-[11px] font-bold text-slate-400 transition-colors" data-challenge-id="1" title="Challenge 1: Vocabulary Challenge">1</span>
+            <span class="nav-dot flex h-6 w-6 items-center justify-center rounded-full border border-border bg-panel text-[11px] font-bold text-slate-400 transition-colors" data-challenge-id="2" title="Challenge 2: Grammar Challenge">2</span>
+            <span class="nav-dot flex h-6 w-6 items-center justify-center rounded-full border border-border bg-panel text-[11px] font-bold text-slate-400 transition-colors" data-challenge-id="3" title="Challenge 3: Reading Comprehension">3</span>
+            <span class="nav-dot flex h-6 w-6 items-center justify-center rounded-full border border-border bg-panel text-[11px] font-bold text-slate-400 transition-colors" data-challenge-id="4" title="Challenge 4: Logic Puzzle">4</span>
+            <span class="nav-dot flex h-6 w-6 items-center justify-center rounded-full border border-border bg-panel text-[11px] font-bold text-slate-400 transition-colors" data-challenge-id="5" title="Challenge 5: Riddle">5</span>
+          </div>
+
+          <a href="story.html" class="hidden rounded-lg border border-gold-600/50 px-3 py-1.5 text-sm font-semibold text-gold-300 transition hover:bg-gold-500/10 md:inline-block">
+            Story
+          </a>
+        </div>
+      </nav>
+    </header>
+
+    <main class="flex-1">
+      <section class="mx-auto max-w-2xl px-4 py-12 sm:px-6">
+        <div class="mb-8 animate-fade-up">
+          <div class="w-full">
+            <div class="mb-1.5 flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-slate-400">
+              <span>Progress</span>
+              <span id="progress-label">0 / 5 challenges</span>
+            </div>
+            <div class="h-3 w-full overflow-hidden rounded-full border border-border bg-panel">
+              <div id="progress-fill" class="h-full w-0 rounded-full bg-gradient-to-r from-azure-500 via-azure-400 to-gold-400 transition-[width] duration-700 ease-out"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel panel-glow rounded-2xl p-6 sm:p-8 animate-fade-up text-center">
+          <p class="mb-2 text-sm font-semibold uppercase tracking-[0.3em] text-azure-300">Final Challenge</p>
+          <h1 class="font-display text-3xl font-black text-gold-300 text-glow-gold sm:text-4xl">🗝️ Open the Chest</h1>
+          <p class="mx-auto mt-4 max-w-md text-sm text-slate-300 sm:text-base">
+            Deep in the castle's crypt lies an ancient chest, guarded by five magical wards. Enter the five secret
+            codes you collected from the guardians, in order, to break the wards and reveal Lord Blackwood's secret.
+          </p>
+
+          <!-- Chest illustration -->
+          <div class="my-10 flex justify-center" style="perspective: 900px;">
+            <div class="relative h-28 w-44 sm:h-32 sm:w-52">
+              <div
+                id="chest-treasure"
+                class="pointer-events-none absolute left-1/2 top-0 -translate-x-1/2 -translate-y-1/2 text-4xl opacity-0 sm:text-5xl"
+                aria-hidden="true"
+              >
+                👑🗝️👻
+              </div>
+              <div
+                id="chest-lid"
+                class="absolute left-0 top-0 h-12 w-full rounded-t-2xl border border-gold-700 bg-gradient-to-b from-gold-300 to-gold-600 shadow-inner sm:h-14"
+                style="transform-origin: top center;"
+              >
+                <div class="mx-auto mt-2 h-3 w-3 rounded-full bg-ink-soft sm:h-4 sm:w-4"></div>
+              </div>
+              <div class="absolute bottom-0 h-20 w-full rounded-b-2xl border border-[#3a230f] bg-gradient-to-b from-[#6b4423] to-[#3a230f] shadow-xl sm:h-22"></div>
+            </div>
+          </div>
+
+          <form id="chest-form" class="space-y-3 text-left">
+            <div class="flex items-center gap-3">
+              <label for="code-1" class="w-24 shrink-0 text-sm font-semibold text-slate-300 sm:w-28">Code 1</label>
+              <input id="code-1" data-challenge-id="1" type="text" autocomplete="off" placeholder="Vocabulary Challenge" class="option-card w-full rounded-lg px-3 py-2 text-center font-mono uppercase tracking-widest text-white focus:border-azure-400 focus:outline-none" />
+            </div>
+            <div class="flex items-center gap-3">
+              <label for="code-2" class="w-24 shrink-0 text-sm font-semibold text-slate-300 sm:w-28">Code 2</label>
+              <input id="code-2" data-challenge-id="2" type="text" autocomplete="off" placeholder="Grammar Challenge" class="option-card w-full rounded-lg px-3 py-2 text-center font-mono uppercase tracking-widest text-white focus:border-azure-400 focus:outline-none" />
+            </div>
+            <div class="flex items-center gap-3">
+              <label for="code-3" class="w-24 shrink-0 text-sm font-semibold text-slate-300 sm:w-28">Code 3</label>
+              <input id="code-3" data-challenge-id="3" type="text" autocomplete="off" placeholder="Reading Comprehension" class="option-card w-full rounded-lg px-3 py-2 text-center font-mono uppercase tracking-widest text-white focus:border-azure-400 focus:outline-none" />
+            </div>
+            <div class="flex items-center gap-3">
+              <label for="code-4" class="w-24 shrink-0 text-sm font-semibold text-slate-300 sm:w-28">Code 4</label>
+              <input id="code-4" data-challenge-id="4" type="text" autocomplete="off" placeholder="Logic Puzzle" class="option-card w-full rounded-lg px-3 py-2 text-center font-mono uppercase tracking-widest text-white focus:border-azure-400 focus:outline-none" />
+            </div>
+            <div class="flex items-center gap-3">
+              <label for="code-5" class="w-24 shrink-0 text-sm font-semibold text-slate-300 sm:w-28">Code 5</label>
+              <input id="code-5" data-challenge-id="5" type="text" autocomplete="off" placeholder="Riddle" class="option-card w-full rounded-lg px-3 py-2 text-center font-mono uppercase tracking-widest text-white focus:border-azure-400 focus:outline-none" />
+            </div>
+
+            <div class="pt-2 text-center">
+              <button
+                type="button"
+                id="reveal-codes-btn"
+                class="text-xs font-semibold text-azure-300 underline decoration-dotted underline-offset-4 hover:text-azure-200"
+              >
+                🔎 Show codes I've already found
+              </button>
+              <p id="reveal-codes-output" class="mt-2 hidden text-xs text-slate-400"></p>
+            </div>
+
+            <div id="chest-feedback" class="hidden"></div>
+
+            <div class="flex justify-center pt-2">
+              <button id="open-chest-btn" type="submit" class="bg-yellow-400 text-black hover:bg-yellow-300 rounded-xl font-bold transition px-8 py-4 text-lg">🗝️ Open the Chest</button>
+            </div>
+          </form>
+
+          <div id="victory-panel" class="mt-8 hidden animate-pop-in rounded-xl border border-gold-500/50 bg-gold-500/10 p-8">
+            <p class="font-display text-3xl font-black text-gold-300 text-glow-gold animate-shimmer sm:text-4xl">
+              YOU ESCAPED!
+            </p>
+            <p class="mt-2 text-lg text-slate-200">Congratulations, brave adventurer! The castle's secret is finally free. 🏆</p>
+            <p id="victory-time" class="mt-3 text-sm text-azure-300"></p>
+            <div class="mt-6">
+              <a id="play-again-btn" href="index.html" class="border border-slate-600 text-white hover:bg-slate-800 rounded-xl transition px-6 py-3 text-base">🔁 Play Again</a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="border-t border-white/10 bg-ink-soft/60 py-6">
+      <div class="mx-auto flex max-w-6xl flex-col items-center gap-2 px-4 text-center text-sm text-slate-400 sm:flex-row sm:justify-between sm:px-6">
+        <p class="flex items-center gap-1.5">
+          <span aria-hidden="true">🕯️</span>
+          Escape Room · The Haunted Castle — built for English class
+        </p>
+        <p class="flex items-center gap-4 text-slate-500">
+          <a href="index.html" class="transition hover:text-gold-300">Home</a>
+          <a href="story.html" class="transition hover:text-gold-300">Story</a>
+          <a href="final.html" class="transition hover:text-gold-300">Chest</a>
+        </p>
+      </div>
+    </footer>
+
+    <script src="js/storage.js"></script>
+    <script src="js/progress.js"></script>
+    <script src="js/app.js"></script>
+    <script>
+      (function () {
+        "use strict";
+
+        var expectedCodes = { 1: "RAVEN", 2: "CROWN", 3: "TOWER", 4: "SHIELD", 5: "GHOST" };
+
+        var form = document.getElementById("chest-form");
+        var feedback = document.getElementById("chest-feedback");
+        var lid = document.getElementById("chest-lid");
+        var treasure = document.getElementById("chest-treasure");
+        var victoryPanel = document.getElementById("victory-panel");
+        var victoryTime = document.getElementById("victory-time");
+
+        document.getElementById("play-again-btn").addEventListener("click", function () {
+          EscapeRoom.storage.resetProgress();
+        });
+
+        document.getElementById("reveal-codes-btn").addEventListener("click", function () {
+          var progress = EscapeRoom.storage.getProgress();
+          var output = document.getElementById("reveal-codes-output");
+          var known = Object.entries(progress.codes);
+          output.textContent = known.length
+            ? known.map(function (entry) { return "Challenge " + entry[0] + ": " + entry[1]; }).join("  ·  ")
+            : "You haven't completed any challenges yet. Go solve some first!";
+          output.classList.remove("hidden");
+        });
+
+        form.addEventListener("submit", function (e) {
+          e.preventDefault();
+          var allCorrect = true;
+
+          Object.keys(expectedCodes).forEach(function (idStr) {
+            var expected = expectedCodes[idStr];
+            var input = document.getElementById("code-" + idStr);
+            var guess = input.value.trim().toUpperCase();
+            var isCorrect = guess === expected;
+            input.classList.toggle("incorrect", !isCorrect);
+            input.classList.toggle("correct", isCorrect);
+            if (!isCorrect) allCorrect = false;
+          });
+
+          if (allCorrect) {
+            EscapeRoom.feedback.clearFeedback(feedback);
+            lid.classList.add("chest-lid-open");
+            treasure.classList.add("treasure-rise");
+            EscapeRoom.confetti.launchConfetti();
+            EscapeRoom.sound.playVictoryFanfare();
+
+            var progress = EscapeRoom.progress.markFinished();
+            if (progress.startTime) {
+              victoryTime.textContent = "Escape time: " + EscapeRoom.progress.formatElapsed(progress.finishTime - progress.startTime);
+            }
+            victoryPanel.classList.remove("hidden");
+            victoryPanel.scrollIntoView({ behavior: "smooth", block: "center" });
+            form.querySelectorAll("input, button").forEach(function (el) { el.disabled = true; });
+          } else {
+            EscapeRoom.feedback.showFeedback(feedback, "error", "One or more codes are wrong. Double-check each challenge page.");
+            EscapeRoom.sound.playError();
+            form.classList.add("animate-shake");
+            setTimeout(function () { form.classList.remove("animate-shake"); }, 650);
+          }
+        });
+      })();
+    </script>
+  </body>
+</html>

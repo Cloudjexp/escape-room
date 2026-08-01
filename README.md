@@ -1,43 +1,38 @@
-# Astro Starter Kit: Minimal
+# Escape Room · The Haunted Castle
 
-```sh
-npm create astro@latest -- --template minimal
-```
+An interactive haunted-castle escape room built for English class. Plain HTML, CSS, and JavaScript — no framework, no build step, no Node.js required.
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
-
-## 🚀 Project Structure
-
-Inside of your Astro project, you'll see the following folders and files:
+## Project structure
 
 ```text
 /
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
+├── index.html
+├── story.html
+├── challenge1.html … challenge5.html
+├── final.html
+├── css/
+│   └── style.css
+├── js/
+│   ├── app.js         # sound effects, confetti, feedback banners, page bootstrap
+│   ├── storage.js     # localStorage persistence
+│   ├── progress.js     # progress/timer/navbar state
+│   └── challenge1.js … challenge5.js
+└── assets/
+    ├── images/
+    └── sounds/
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+## Running it
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+There is nothing to install and nothing to build. Either:
 
-Any static assets, like images, can be placed in the `public/` directory.
+- Open `index.html` directly in a browser, or
+- Serve the folder with any static file server, e.g. `python3 -m http.server 8080`.
 
-## 🧞 Commands
+## Deploying to GitHub Pages
 
-All commands are run from the root of the project, from a terminal:
+Push to `main` — `.github/workflows/pages.yml` publishes the repository as-is, with no build step. You can also enable Pages to deploy straight from the `main` branch in the repository settings, since there is no compiled output to generate.
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+## Gameplay
 
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+Solve five challenges (vocabulary, grammar, reading, logic, and a riddle) to collect five secret codes, then enter them on the final page to open the chest. Progress, the timer, and completed codes are saved automatically in `localStorage`, so players can leave and come back.
