@@ -3,6 +3,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import Button from "../components/Button.astro";
 import Card from "../components/Card.astro";
 import { STORY_TITLE } from "../data/story";
+import { withBase } from "../utils/url";
 ---
 
 <BaseLayout title="Welcome" description="An interactive haunted-castle escape room for English class.">
@@ -30,10 +31,10 @@ import { STORY_TITLE } from "../data/story";
       </p>
 
       <div class="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
-        <Button href="/story" variant="primary" size="lg" id="start-btn">
+        <Button href={withBase("/story")} variant="primary" size="lg" id="start-btn">
           🏰 Start Adventure
         </Button>
-        <Button href="/final" variant="ghost" size="lg">
+        <Button href={withBase("/final")} variant="ghost" size="lg">
           🗝️ Go to the Chest
         </Button>
       </div>

@@ -4,6 +4,7 @@ import Card from "../components/Card.astro";
 import Button from "../components/Button.astro";
 import ProgressBar from "../components/ProgressBar.astro";
 import { CHALLENGES } from "../data/challenges";
+import { withBase } from "../utils/url";
 
 const FIELDS = CHALLENGES.map((c) => ({ id: `code-${c.id}`, challengeId: c.id, label: `Code ${c.id}`, hint: c.subtitle }));
 ---
@@ -88,7 +89,7 @@ const FIELDS = CHALLENGES.map((c) => ({ id: `code-${c.id}`, challengeId: c.id, l
         <p class="mt-2 text-lg text-slate-200">Congratulations, brave adventurer! The castle's secret is finally free. 🏆</p>
         <p id="victory-time" class="mt-3 text-sm text-azure-300"></p>
         <div class="mt-6">
-          <Button id="play-again-btn" href="/" variant="ghost" size="md">🔁 Play Again</Button>
+          <Button id="play-again-btn" href={withBase("/")} variant="ghost" size="md">🔁 Play Again</Button>
         </div>
       </div>
     </Card>

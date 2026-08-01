@@ -8,6 +8,7 @@ import Card from "./Card.astro";
 import ProgressBar from "./ProgressBar.astro";
 import Button from "./Button.astro";
 import { getChallenge, CHALLENGES } from "../data/challenges";
+import { withBase } from "../utils/url";
 
 interface Props {
   id: number;
@@ -17,7 +18,7 @@ interface Props {
 const { id, instructions } = Astro.props;
 const challenge = getChallenge(id);
 const next = CHALLENGES.find((c) => c.id === id + 1);
-const nextPath = next ? next.path : "/final";
+const nextPath = withBase(next ? next.path : "/final");
 const nextLabel = next ? `Challenge ${next.id}` : "The Chest";
 ---
 
@@ -57,8 +58,8 @@ const nextLabel = next ? `Challenge ${next.id}` : "The Chest";
   </Card>
 
   <div class="mt-6 flex justify-between text-sm">
-    <a href="/story" class="text-slate-400 transition hover:text-gold-300">← Back to story</a>
-    <a href="/final" class="text-slate-400 transition hover:text-gold-300">Go to the chest →</a>
+    <a href={withBase("/story")} class="text-slate-400 transition hover:text-gold-300">← Back to story</a>
+    <a href={withBase("/final")} class="text-slate-400 transition hover:text-gold-300">Go to the chest →</a>
   </div>
 </section>
 

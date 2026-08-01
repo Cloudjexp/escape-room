@@ -1,10 +1,11 @@
 ---
 import { CHALLENGES } from "../data/challenges";
+import { withBase } from "../utils/url";
 ---
 
 <header class="sticky top-0 z-50 border-b border-white/10 bg-ink/80 backdrop-blur-md">
   <nav class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
-    <a href="/" class="flex items-center gap-2 font-display text-lg font-bold text-gold-400 sm:text-xl">
+    <a href={withBase("/")} class="flex items-center gap-2 font-display text-lg font-bold text-gold-400 sm:text-xl">
       <span aria-hidden="true">🏰</span>
       <span class="hidden sm:inline">The Haunted Castle</span>
       <span class="sm:hidden">Escape Room</span>
@@ -29,7 +30,7 @@ import { CHALLENGES } from "../data/challenges";
       </div>
 
       <a
-        href="/story"
+        href={withBase("/story")}
         class="hidden rounded-lg border border-gold-600/50 px-3 py-1.5 text-sm font-semibold text-gold-300 transition hover:bg-gold-500/10 md:inline-block"
       >
         Story

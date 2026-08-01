@@ -5,6 +5,7 @@ import Card from "../components/Card.astro";
 import ProgressBar from "../components/ProgressBar.astro";
 import { STORY_TITLE, STORY_PARAGRAPHS, STORY_RULES } from "../data/story";
 import { CHALLENGES } from "../data/challenges";
+import { withBase } from "../utils/url";
 ---
 
 <BaseLayout title="Story">
@@ -40,7 +41,7 @@ import { CHALLENGES } from "../data/challenges";
       <div class="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-5">
         {CHALLENGES.map((c) => (
           <a
-            href={c.path}
+            href={withBase(c.path)}
             class="group flex flex-col items-center gap-1 rounded-xl border border-border bg-panel px-3 py-4 text-center transition hover:-translate-y-1 hover:border-gold-500/60"
           >
             <span class="text-2xl transition group-hover:scale-110" aria-hidden="true">
@@ -52,7 +53,7 @@ import { CHALLENGES } from "../data/challenges";
       </div>
 
       <div class="mt-10 flex justify-center">
-        <Button href="/challenge/1" variant="primary" size="lg">
+        <Button href={withBase("/challenge/1")} variant="primary" size="lg">
           🚩 Begin Challenge 1
         </Button>
       </div>
